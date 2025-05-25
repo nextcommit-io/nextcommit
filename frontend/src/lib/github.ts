@@ -1,21 +1,53 @@
 export async function fetchGitHubData(accessToken: string) {
   const headers = {
-    Authorization: `token ${accessToken}`,
-    Accept: 'application/vnd.github.v3+json',
+    Authorization: `Bearer ${accessToken}`,
+    Accept: 'application/vnd.github+json',
   };
 
-  const [repos, pullRequests] = await Promise.all([
-    fetch('https://api.github.com/user/repos?per_page=100', { headers }).then(
-      (res) => res.json()
-    ),
+  const [reposRes, prRes] = await Promise.all([
+    fetch('https://api.github.com/user/repos', { headers }),
     fetch('https://api.github.com/search/issues?q=is:pr+author:@me', {
       headers,
-    }).then((res) => res.json()),
+    }),
   ]);
 
-  // Split into forks and originals
-  const forkedRepos = repos.filter((repo: any) => repo.fork);
-  const originalRepos = repos.filter((repo: any) => !repo.fork);
+  const allRepos = await reposRes.json();
+  const pullRequests = await prRes.json();
 
-  return { originalRepos, forkedRepos, pullRequests };
+  const originalRepos = allRepos.filter((repo: any) => !repo.fork);
+  const forkedRepos = allRepos.filter((repo: any) => repo.fork);
+
+  // Fetch top commit and its code diffs for each original repo (limit to 5 repos)
+  const commits = await Promise.all(
+    originalRepos.slice(0, 5).map(async (repo: any) => {
+      const commitsRes = await fetch(
+        `https://api.github.com/repos/${repo.full_name}/commits`,
+        { headers }
+      );
+      const commitList = await commitsRes.json();
+      const topCommit = commitList[0];
+
+      if (!topCommit) return { repo: repo.full_name, commits: [] };
+
+      const commitDetailRes = await fetch(
+        `https://api.github.com/repos/${repo.full_name}/commits/${topCommit.sha}`,
+        { headers }
+      );
+      const commitDetail = await commitDetailRes.json();
+
+      return {
+        repo: repo.full_name,
+        commits: [
+          {
+            sha: topCommit.sha,
+            message: topCommit.commit.message,
+            html_url: topCommit.html_url,
+            files: commitDetail.files || [],
+          },
+        ],
+      };
+    })
+  );
+
+  return { originalRepos, forkedRepos, pullRequests, commits };
 }
