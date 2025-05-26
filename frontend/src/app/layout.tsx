@@ -1,22 +1,22 @@
-import type { Metadata } from 'next';
 import StyledComponentsRegistry from '@/lib/registry';
 import SessionWrapper from '@/contexts/SessionWrapper';
+import ThemeWrapper from '@/contexts/ThemeWrapper';
+import './globals.css';
 
-export const metadata: Metadata = {
-  title: 'NextCommit',
-  description: 'GitHub login example',
-};
-
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
+      <head>
+        <link
+          href="https://geistsans.vercel.app/font.css"
+          rel="stylesheet"
+        />
+      </head>
       <body>
         <StyledComponentsRegistry>
-          <SessionWrapper>{children}</SessionWrapper>
+          <ThemeWrapper>
+            <SessionWrapper>{children}</SessionWrapper>
+          </ThemeWrapper>
         </StyledComponentsRegistry>
       </body>
     </html>
