@@ -1,44 +1,85 @@
-import { OpenSourceProjectCard } from '@/componetns/open-source-projects/open-source-project-card';
+import React, { useEffect, useState } from 'react';
 import { Heading } from '@/design-system';
 import { OpenSourceProject } from '@/types';
-import React from 'react';
 import styled from 'styled-components';
+import { OpenSourceProjectCard } from '@/componetns';
 
 const Container = styled.div`
-  max-width: 800px;
+  max-width: 1000px;
   margin: 0 auto;
-  padding: 40px 20px;
+  padding: 60px 20px;
+  background-color: #0d1117;
+  color: #c9d1d9;
+  min-height: 100vh;
+  font-family: 'Inter', sans-serif;
 `;
 
-const mockProjects: OpenSourceProject[] = [
-  {
-    name: 'Odigos',
-    description: 'Observability framework with zero code changes.',
-    url: 'https://github.com/keyval-dev/odigos',
-    language: 'Go',
-  },
-  {
-    name: 'React',
-    description:
-      'A declarative, efficient, and flexible JavaScript library for building user interfaces.',
-    url: 'https://github.com/facebook/react',
-    language: 'JavaScript',
-  },
-  {
-    name: 'Next.js',
-    description: 'The React framework for production.',
-    url: 'https://github.com/vercel/next.js',
-    language: 'TypeScript',
-  },
-];
+const ProjectsGrid = styled.div`
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+  margin-top: 40px;
 
-const OpenSourceProjectsContainer: React.FC = () => (
-  <Container>
-    <Heading>Featured Open Source Projects</Heading>
-    {mockProjects.map((project) => (
-      <OpenSourceProjectCard key={project.name} project={project} />
-    ))}
-  </Container>
-);
+  @media (min-width: 768px) {
+    grid-template-columns: 1fr 1fr;
+  }
+`;
+
+const StyledHeading = styled(Heading)`
+  font-size: 32px;
+  font-weight: bold;
+  color: #58a6ff;
+  text-align: center;
+`;
+
+const OpenSourceProjectsContainer: React.FC = () => {
+  const [projects, setProjects] = useState<OpenSourceProject[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchTrendingProjects = async () => {
+      try {
+        const res = await fetch(
+          'https://gtrend.yapie.me/repositories?since=daily'
+        );
+        if (!res.ok) throw new Error('Failed to fetch trending projects');
+
+        const data = await res.json();
+
+        const formattedProjects: OpenSourceProject[] = data.map(
+          (repo: any) => ({
+            name: `${repo.author}/${repo.name}`,
+            description: repo.description,
+            url: repo.url,
+            language: repo.language || 'N/A',
+          })
+        );
+
+        setProjects(formattedProjects);
+      } catch (err) {
+        setError((err as Error).message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTrendingProjects();
+  }, []);
+
+  if (loading) return <Container>Loading trending projects...</Container>;
+  if (error) return <Container>Error: {error}</Container>;
+
+  return (
+    <Container>
+      <StyledHeading>🔥 Trending Open Source Projects</StyledHeading>
+      <ProjectsGrid>
+        {projects.map((project) => (
+          <OpenSourceProjectCard key={project.name} project={project} />
+        ))}
+      </ProjectsGrid>
+    </Container>
+  );
+};
 
 export { OpenSourceProjectsContainer };
