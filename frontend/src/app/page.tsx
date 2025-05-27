@@ -1,5 +1,10 @@
 'use client';
+import { OpenSourceProjectsContainer } from '@/containers';
 
 export default function HomePage() {
-  return <div>THIS IS THE HOME PAGE</div>;
+  return (
+    <div>
+      <OpenSourceProjectsContainer />
+    </div>
+  );
 }
