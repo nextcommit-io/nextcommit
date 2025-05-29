@@ -14,13 +14,14 @@ const StyledText = styled.span<{
   $weight: 'normal' | 'bold';
   $color?: string;
 }>`
+  font-family: ${({ theme }) => theme.fonts.primary};
   font-size: ${({ $size }) =>
     $size === 'sm' ? '0.875rem' :
     $size === 'lg' ? '4rem' :
     '1rem'};
 
   font-weight: ${({ $weight }) => ($weight === 'bold' ? 600 : 400)};
-  color: ${({ $color }) => $color || 'inherit'};
+  color: ${({ $color, theme }) => $color || theme.colors.text};
 `;
 
 export default function Text({ children, size = 'md', weight = 'normal', color }: TextProps) {
@@ -30,3 +31,4 @@ export default function Text({ children, size = 'md', weight = 'normal', color }
     </StyledText>
   );
 }
+
