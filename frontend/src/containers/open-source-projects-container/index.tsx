@@ -51,6 +51,11 @@ const OpenSourceProjectsContainer: React.FC = () => {
             description: repo.description,
             url: repo.url,
             language: repo.language || 'N/A',
+            stars: repo.stars,
+            forks: repo.forks,
+            currentPeriodStars: repo.currentPeriodStars,
+            avatar: repo.avatar,
+            builtBy: repo.builtBy,
           })
         );
 
