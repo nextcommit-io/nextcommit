@@ -1,8 +1,10 @@
 'use client';
-import React, { useEffect, useState } from 'react';
-import { OpenSourceProject } from '@/types';
+
+import React, { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
+import { OpenSourceProject } from '@/types';
 import { OpenSourceProjectCard } from '@/components';
+import { ProjectFiltersContainer } from '../project-filters-container';
 
 const Container = styled.div`
   margin: 0 auto;
@@ -32,6 +34,8 @@ const StyledHeading = styled.div`
 
 const OpenSourceProjectsContainer: React.FC = () => {
   const [projects, setProjects] = useState<OpenSourceProject[]>([]);
+  const [language, setLanguage] = useState('All');
+  const [sort, setSort] = useState('most_stars');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -70,14 +74,56 @@ const OpenSourceProjectsContainer: React.FC = () => {
     fetchTrendingProjects();
   }, []);
 
+  const languageOptions = useMemo(
+    () => [
+      'All',
+      ...Array.from(new Set(projects.map((p) => p.language))).sort(),
+    ],
+    [projects]
+  );
+
+  const filteredProjects = useMemo(() => {
+    let list = [...projects];
+    if (language !== 'All') {
+      list = list.filter((p) => p.language === language);
+    }
+
+    switch (sort) {
+      case 'most_stars':
+        return list.sort((a, b) => b.stars - a.stars);
+      case 'fewest_stars':
+        return list.sort((a, b) => a.stars - b.stars);
+      case 'most_forks':
+        return list.sort((a, b) => b.forks - a.forks);
+      case 'fewest_forks':
+        return list.sort((a, b) => a.forks - b.forks);
+      case 'most_trending':
+        return list.sort((a, b) => b.currentPeriodStars - a.currentPeriodStars);
+      default:
+        return list;
+    }
+  }, [projects, language, sort]);
+
   if (loading) return <Container>Loading trending projects...</Container>;
   if (error) return <Container>Error: {error}</Container>;
 
   return (
     <Container>
-      <StyledHeading>🔥 Trending Open Source Projects</StyledHeading>
+      <StyledHeading>
+        🔥 {filteredProjects.length.toLocaleString()} open source projects you
+        can contribute to today
+      </StyledHeading>
+
+      <ProjectFiltersContainer
+        language={language}
+        setLanguage={setLanguage}
+        sort={sort}
+        setSort={setSort}
+        languageOptions={languageOptions}
+      />
+
       <ProjectsGrid>
-        {projects.map((project) => (
+        {filteredProjects.map((project) => (
           <OpenSourceProjectCard key={project.name} project={project} />
         ))}
       </ProjectsGrid>
