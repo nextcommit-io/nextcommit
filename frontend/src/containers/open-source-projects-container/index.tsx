@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { OpenSourceProject } from '@/types';
 import styled from 'styled-components';
-import { OpenSourceProjectCard } from '@/componetns';
+import { OpenSourceProjectCard } from '@/components';
 
 const Container = styled.div`
   margin: 0 auto;

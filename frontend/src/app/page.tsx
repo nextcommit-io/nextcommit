@@ -1,9 +1,13 @@
 'use client';
-import { OpenSourceProjectsContainer } from '@/containers';
+import {
+  HomepageHeroContainer,
+  OpenSourceProjectsContainer,
+} from '@/containers';
 
 export default function HomePage() {
   return (
     <div>
+      <HomepageHeroContainer />
       <OpenSourceProjectsContainer />
     </div>
   );
