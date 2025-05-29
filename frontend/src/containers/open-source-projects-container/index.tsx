@@ -7,9 +7,7 @@ import { OpenSourceProjectCard } from '@/components';
 import { ProjectFiltersContainer } from '../project-filters-container';
 
 const Container = styled.div`
-  margin: 0 auto;
-  padding: 60px 20px;
-  background-color: #0d1117;
+  padding: 60px 160px;
   min-height: 100vh;
   font-family: 'Inter', sans-serif;
 `;
@@ -29,7 +27,6 @@ const StyledHeading = styled.div`
   font-size: 32px;
   font-weight: bold;
   color: #58a6ff;
-  text-align: center;
 `;
 
 const OpenSourceProjectsContainer: React.FC = () => {

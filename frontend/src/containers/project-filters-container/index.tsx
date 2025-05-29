@@ -6,7 +6,6 @@ const FiltersBar = styled.div`
   display: flex;
   flex-wrap: wrap;
   gap: 16px;
-  justify-content: center;
   margin: 24px 0;
 `;
 
