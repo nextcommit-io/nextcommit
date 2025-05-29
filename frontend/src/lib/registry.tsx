@@ -1,16 +1,12 @@
 'use client';
 
-import React, { useState } from 'react';
-import { ServerStyleSheet, StyleSheetManager } from 'styled-components';
+import React from 'react';
+import { StyleSheetManager } from 'styled-components';
 
 export default function StyledComponentsRegistry({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const [sheet] = useState(() => new ServerStyleSheet());
-
-  return (
-    <StyleSheetManager sheet={sheet.instance}>{children}</StyleSheetManager>
-  );
+  return <StyleSheetManager>{children}</StyleSheetManager>;
 }

@@ -1,15 +1,13 @@
+'use client';
 import React, { useEffect, useState } from 'react';
-import { Heading } from '@/design-system';
 import { OpenSourceProject } from '@/types';
 import styled from 'styled-components';
 import { OpenSourceProjectCard } from '@/componetns';
 
 const Container = styled.div`
-  max-width: 1000px;
   margin: 0 auto;
   padding: 60px 20px;
   background-color: #0d1117;
-  color: #c9d1d9;
   min-height: 100vh;
   font-family: 'Inter', sans-serif;
 `;
@@ -25,7 +23,7 @@ const ProjectsGrid = styled.div`
   }
 `;
 
-const StyledHeading = styled(Heading)`
+const StyledHeading = styled.div`
   font-size: 32px;
   font-weight: bold;
   color: #58a6ff;
