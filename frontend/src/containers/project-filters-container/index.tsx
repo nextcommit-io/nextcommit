@@ -18,12 +18,28 @@ const Select = styled.select`
   border-radius: 6px;
 `;
 
+const SearchInput = styled.input`
+  background-color: ${({ theme }) => theme.colors.surface};
+  color: ${({ theme }) => theme.colors.textPrimary};
+  padding: 10px;
+  font-size: 14px;
+  border-radius: 6px;
+  border: 1px solid ${({ theme }) => theme.colors.border};
+  width: 300px;
+
+  @media (max-width: 768px) {
+    width: 100%;
+  }
+`;
+
 interface ProjectFiltersProps {
   language: string;
   setLanguage: (lang: string) => void;
   sort: string;
   setSort: (sort: string) => void;
   languageOptions: string[];
+  searchQuery: string;
+  setSearchQuery: (query: string) => void;
 }
 
 export const ProjectFiltersContainer: React.FC<ProjectFiltersProps> = ({
@@ -32,9 +48,18 @@ export const ProjectFiltersContainer: React.FC<ProjectFiltersProps> = ({
   sort,
   setSort,
   languageOptions,
+  searchQuery,
+  setSearchQuery,
 }) => {
   return (
     <FiltersBar>
+      <SearchInput
+        type="text"
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+        placeholder="Search by name or description..."
+      />
+
       <Select value={language} onChange={(e) => setLanguage(e.target.value)}>
         {languageOptions.map((lang) => (
           <option key={lang} value={lang}>

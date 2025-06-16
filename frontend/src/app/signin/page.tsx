@@ -35,7 +35,7 @@ const Button = styled.button`
 `;
 
 export default function SignIn() {
-  console.log('GITHUB_CLIENT_ID:', process.env.GITHUB_CLIENT_ID);
+  console.log('GITHUB_CLIENT_ID:', process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID);
 
   return (
     <Container>

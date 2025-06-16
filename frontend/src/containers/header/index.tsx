@@ -7,7 +7,8 @@ const HeaderWrapper = styled.header`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px 32px;
+
+  padding: 60px 160px;
 `;
 
 const LogoWrapper = styled.div`

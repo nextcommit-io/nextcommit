@@ -35,12 +35,13 @@ const OpenSourceProjectsContainer: React.FC = () => {
   const [sort, setSort] = useState('most_stars');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     const fetchTrendingProjects = async () => {
       try {
         const res = await fetch(
-          'https://gtrend.yapie.me/repositories?since=daily'
+          `https://cors-anywhere.herokuapp.com/https://gtrend.yapie.me/repositories?since=daily`
         );
         if (!res.ok) throw new Error('Failed to fetch trending projects');
 
@@ -54,7 +55,7 @@ const OpenSourceProjectsContainer: React.FC = () => {
             language: repo.language || 'N/A',
             stars: repo.stars,
             forks: repo.forks,
-            currentPeriodStars: repo.currentPeriodStars,
+            currentPeriodStars: repo.currentPeriodStars || 0,
             avatar: repo.avatar,
             builtBy: repo.builtBy,
           })
@@ -81,6 +82,16 @@ const OpenSourceProjectsContainer: React.FC = () => {
 
   const filteredProjects = useMemo(() => {
     let list = [...projects];
+
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase();
+      list = list.filter(
+        (p) =>
+          p.name.toLowerCase().includes(q) ||
+          p.description?.toLowerCase().includes(q)
+      );
+    }
+
     if (language !== 'All') {
       list = list.filter((p) => p.language === language);
     }
@@ -99,7 +110,7 @@ const OpenSourceProjectsContainer: React.FC = () => {
       default:
         return list;
     }
-  }, [projects, language, sort]);
+  }, [projects, language, sort, searchQuery]);
 
   if (loading) return <Container>Loading trending projects...</Container>;
   if (error) return <Container>Error: {error}</Container>;
@@ -110,13 +121,14 @@ const OpenSourceProjectsContainer: React.FC = () => {
         🔥 {filteredProjects.length.toLocaleString()} open source projects you
         can contribute to today
       </StyledHeading>
-
       <ProjectFiltersContainer
         language={language}
         setLanguage={setLanguage}
         sort={sort}
         setSort={setSort}
         languageOptions={languageOptions}
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
       />
 
       <ProjectsGrid>
