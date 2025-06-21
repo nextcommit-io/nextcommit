@@ -463,6 +463,58 @@ const BEGINNER_FRIENDLY_PROJECTS: OpenSourceProject[] = [
   },
 ];
 
+// Custom hook for counting animation
+const useCountAnimation = (end: number, duration: number = 2000) => {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    let startTime: number;
+    let animationFrame: number;
+
+    const animate = (currentTime: number) => {
+      if (!startTime) startTime = currentTime;
+      const progress = Math.min((currentTime - startTime) / duration, 1);
+
+      // Easing function for smooth animation
+      const easeOutQuart = 1 - Math.pow(1 - progress, 4);
+      const currentCount = Math.floor(end * easeOutQuart);
+
+      setCount(currentCount);
+
+      if (progress < 1) {
+        animationFrame = requestAnimationFrame(animate);
+      }
+    };
+
+    animationFrame = requestAnimationFrame(animate);
+
+    return () => {
+      if (animationFrame) {
+        cancelAnimationFrame(animationFrame);
+      }
+    };
+  }, [end, duration]);
+
+  return count;
+};
+
+// Animated Stat Number Component
+const AnimatedStatNumber = ({
+  value,
+  suffix = '',
+}: {
+  value: number;
+  suffix?: string;
+}) => {
+  const count = useCountAnimation(value);
+  return (
+    <StatNumber>
+      {count}
+      {suffix}
+    </StatNumber>
+  );
+};
+
 const OpenSourceProjectsContainer: React.FC = () => {
   const [projects, setProjects] = useState<OpenSourceProject[]>([]);
   const [language, setLanguage] = useState('All');
@@ -593,19 +645,25 @@ const OpenSourceProjectsContainer: React.FC = () => {
 
       <StatsBar>
         <Stat>
-          <StatNumber>{filteredProjects.length}</StatNumber>
+          <AnimatedStatNumber value={filteredProjects.length} />
           <StatLabel>Projects</StatLabel>
         </Stat>
         <Stat>
-          <StatNumber>{(totalStars / 1000).toFixed(1)}k</StatNumber>
+          <AnimatedStatNumber
+            value={Math.round(totalStars / 1000)}
+            suffix="k"
+          />
           <StatLabel>Total Stars</StatLabel>
         </Stat>
         <Stat>
-          <StatNumber>{(totalForks / 1000).toFixed(1)}k</StatNumber>
+          <AnimatedStatNumber
+            value={Math.round(totalForks / 1000)}
+            suffix="k"
+          />
           <StatLabel>Total Forks</StatLabel>
         </Stat>
         <Stat>
-          <StatNumber>12</StatNumber>
+          <AnimatedStatNumber value={12} />
           <StatLabel>Languages</StatLabel>
         </Stat>
       </StatsBar>

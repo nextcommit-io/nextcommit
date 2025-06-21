@@ -4,7 +4,7 @@ import type { Metadata } from 'next';
 
 import SessionWrapper from '@/contexts/SessionWrapper';
 import StyledRoot from '@/components/styled-root';
-import { HeaderContainer } from '@/containers';
+import { FooterContainer, HeaderContainer } from '@/containers';
 
 export const metadata: Metadata = {
   title: 'NextCommit',
@@ -23,6 +23,7 @@ export default function RootLayout({
           <SessionWrapper>
             <HeaderContainer />
             {children}
+            <FooterContainer />
           </SessionWrapper>
         </StyledRoot>
       </body>
