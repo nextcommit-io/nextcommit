@@ -447,10 +447,6 @@ export const HomepageHeroContainer = () => {
     signIn('github');
   };
 
-  const handleGoToDashboard = () => {
-    window.location.href = '/dashboard';
-  };
-
   const handleBrowseDevelopers = () => {
     window.location.href = '/top-developers';
   };
@@ -470,17 +466,6 @@ export const HomepageHeroContainer = () => {
 
           {isLoading ? (
             <LoadingSpinner />
-          ) : session?.user ? (
-            <ButtonGroup>
-              <DashboardButton onClick={handleGoToDashboard}>
-                <FaArrowRight size={20} />
-                Go to Dashboard
-              </DashboardButton>
-              <BrowseButton onClick={handleBrowseDevelopers}>
-                <FaUsers size={20} />
-                Browse Top Developers
-              </BrowseButton>
-            </ButtonGroup>
           ) : (
             <ButtonGroup>
               <CTAButton onClick={handleSignIn}>

@@ -2,6 +2,7 @@
 import {
   HomepageHeroContainer,
   OpenSourceProjectsContainer,
+  TopDevelopersPreviewContainer,
   HeaderContainer,
   FooterContainer,
 } from '@/containers';
@@ -50,6 +51,7 @@ export default function HomePage() {
         </FloatingElements>
 
         <HomepageHeroContainer />
+        <TopDevelopersPreviewContainer />
         <OpenSourceProjectsContainer />
       </PageWrapper>
       <FooterContainer />
