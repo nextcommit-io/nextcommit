@@ -8,8 +8,6 @@ import {
   FaArrowRight,
 } from 'react-icons/fa';
 import { signIn, useSession } from 'next-auth/react';
-import Lottie from 'lottie-react';
-import animationData from '@/../public/lotties/bg1.json';
 
 const HeroWrapper = styled.div`
   position: relative;
@@ -17,33 +15,9 @@ const HeroWrapper = styled.div`
   min-height: 85vh;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  overflow: hidden;
-  background: linear-gradient(
-    135deg,
-    ${({ theme }) => theme.colors.background} 0%,
-    ${({ theme }) => theme.colors.surface} 100%
-  );
-
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: radial-gradient(
-        circle at 20% 80%,
-        rgba(88, 166, 255, 0.1) 0%,
-        transparent 50%
-      ),
-      radial-gradient(
-        circle at 80% 20%,
-        rgba(255, 107, 107, 0.1) 0%,
-        transparent 50%
-      );
-    pointer-events: none;
-  }
+  justify-content: center;
+  overflow: visible;
+  background: transparent;
 `;
 
 const HeroSection = styled.section`
@@ -55,7 +29,7 @@ const HeroSection = styled.section`
   z-index: 2;
   position: relative;
 
-  @media (min-width: 768px) {
+  @media (min-width: 992px) {
     flex-direction: row;
     justify-content: space-between;
     text-align: left;
@@ -68,21 +42,9 @@ const Content = styled.div`
   z-index: 2;
   position: relative;
 
-  &::before {
-    content: '';
-    position: absolute;
-    top: -20px;
-    left: -20px;
-    right: -20px;
-    bottom: -20px;
-    background: linear-gradient(
-      135deg,
-      rgba(88, 166, 255, 0.05) 0%,
-      rgba(255, 107, 107, 0.05) 100%
-    );
-    border-radius: 20px;
-    filter: blur(20px);
-    z-index: -1;
+  @media (max-width: 992px) {
+    max-width: 100%;
+    text-align: center;
   }
 `;
 
@@ -119,6 +81,10 @@ const Title = styled.h1`
     border-radius: 2px;
   }
 
+  @media (max-width: 992px) {
+    margin: 0 auto 24px;
+  }
+
   @media (min-width: 768px) {
     &::after {
       width: 80px;
@@ -133,6 +99,10 @@ const Subtitle = styled.p`
   margin-bottom: 32px;
   font-weight: 400;
   max-width: 600px;
+
+  @media (max-width: 992px) {
+    margin: 0 auto 32px;
+  }
 `;
 
 const CTAButton = styled.button`
@@ -209,25 +179,15 @@ const DashboardButton = styled(CTAButton)`
   }
 `;
 
-const LottieBottom = styled.div`
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  pointer-events: none;
-  opacity: 0.6;
-
-  & > div {
-    width: 100% !important;
-    height: 100% !important;
-  }
-`;
-
 const TagsContainer = styled.div`
   display: flex;
   flex-wrap: wrap;
   gap: 16px;
   margin-top: 32px;
+
+  @media (max-width: 992px) {
+    justify-content: center;
+  }
 `;
 
 const Tag = styled.span`
@@ -297,10 +257,9 @@ const StatsContainer = styled.div`
   display: flex;
   gap: 32px;
   margin-top: 40px;
-  justify-content: center;
 
-  @media (min-width: 768px) {
-    justify-content: flex-start;
+  @media (max-width: 992px) {
+    justify-content: center;
   }
 `;
 
@@ -336,44 +295,6 @@ const StatLabel = styled.div`
   margin-top: 4px;
 `;
 
-const FloatingElements = styled.div`
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  pointer-events: none;
-  z-index: 1;
-`;
-
-const FloatingElement = styled.div<{
-  delay: number;
-  duration: number;
-  size: number;
-}>`
-  position: absolute;
-  width: ${({ size }) => size}px;
-  height: ${({ size }) => size}px;
-  background: linear-gradient(
-    135deg,
-    ${({ theme }) => theme.colors.accent}20,
-    transparent
-  );
-  border-radius: 50%;
-  animation: float ${({ duration }) => duration}s ease-in-out infinite;
-  animation-delay: ${({ delay }) => delay}s;
-
-  @keyframes float {
-    0%,
-    100% {
-      transform: translateY(0px) rotate(0deg);
-    }
-    50% {
-      transform: translateY(-20px) rotate(180deg);
-    }
-  }
-`;
-
 const LoadingSpinner = styled.div`
   width: 20px;
   height: 20px;
@@ -394,6 +315,96 @@ const LoadingSpinner = styled.div`
   }
 `;
 
+const IllustrationContainer = styled.div`
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  min-height: 400px;
+  perspective: 1000px;
+
+  @media (max-width: 992px) {
+    display: none;
+  }
+`;
+
+const DevIllustration = styled.div`
+  width: 450px;
+  height: 320px;
+  background: rgba(13, 17, 23, 0.5);
+  border: 1px solid ${({ theme }) => theme.colors.border};
+  border-radius: 12px;
+  backdrop-filter: blur(12px);
+  position: relative;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+  transform: rotateY(-15deg) rotateX(10deg);
+  transform-style: preserve-3d;
+  transition: transform 0.3s ease;
+
+  &:hover {
+    transform: rotateY(0deg) rotateX(0deg) scale(1.05);
+  }
+`;
+
+const IllustrationHeader = styled.div`
+  display: flex;
+  gap: 8px;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.2);
+  border-bottom: 1px solid ${({ theme }) => theme.colors.border};
+`;
+
+const HeaderDot = styled.div`
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: ${(props) => props.color};
+`;
+
+const CodeArea = styled.div`
+  padding: 16px;
+`;
+
+const CodeLine = styled.div<{ delay?: number }>`
+  font-family: ${({ theme }) => theme.fonts.mono};
+  font-size: 13px;
+  line-height: 1.6;
+  color: ${({ theme }) => theme.colors.textSecondary};
+  white-space: pre;
+  opacity: 0;
+  animation: fadeIn 0.5s ease forwards;
+  ${({ delay }) => delay && `animation-delay: ${delay}s;`}
+
+  @keyframes fadeIn {
+    to {
+      opacity: 1;
+    }
+  }
+
+  .keyword {
+    color: #c678dd;
+  }
+  .function {
+    color: #61afef;
+  }
+  .string {
+    color: #98c379;
+  }
+  .tag {
+    color: #e06c75;
+  }
+  .punctuation {
+    color: #abb2bf;
+  }
+  .comment {
+    color: #5c6370;
+  }
+  .text {
+    color: #abb2bf;
+  }
+`;
+
 export const HomepageHeroContainer = () => {
   const { data: session, status } = useSession();
 
@@ -409,27 +420,6 @@ export const HomepageHeroContainer = () => {
 
   return (
     <HeroWrapper>
-      <FloatingElements>
-        <FloatingElement
-          delay={0}
-          duration={6}
-          size={20}
-          style={{ top: '20%', left: '10%' }}
-        />
-        <FloatingElement
-          delay={2}
-          duration={8}
-          size={15}
-          style={{ top: '60%', right: '15%' }}
-        />
-        <FloatingElement
-          delay={4}
-          duration={7}
-          size={25}
-          style={{ top: '30%', right: '25%' }}
-        />
-      </FloatingElements>
-
       <HeroSection>
         <Content>
           <Title>Contribute. Learn. Get Hired.</Title>
@@ -483,11 +473,62 @@ export const HomepageHeroContainer = () => {
             </Stat>
           </StatsContainer>
         </Content>
+        <IllustrationContainer>
+          <DevIllustration>
+            <IllustrationHeader>
+              <HeaderDot color="#ff5f56" />
+              <HeaderDot color="#ffbd2e" />
+              <HeaderDot color="#27c93f" />
+            </IllustrationHeader>
+            <CodeArea>
+              <CodeLine delay={0.5}>
+                <span className="comment">
+                  {'//'} Build your first component
+                </span>
+              </CodeLine>
+              <CodeLine delay={1.0}>
+                <span className="keyword">import</span> React{' '}
+                <span className="keyword">from</span>{' '}
+                <span className="string">'react'</span>;
+              </CodeLine>
+              <CodeLine delay={1.5} />
+              <CodeLine delay={2.0}>
+                {`const `}
+                <span className="function">ProfileCard</span>
+                {` = ({ user }) => {`}
+              </CodeLine>
+              <CodeLine delay={2.5}>
+                {'  '}
+                <span className="keyword">return</span> (
+              </CodeLine>
+              <CodeLine delay={3.0}>
+                {'    '}
+                {`<`}
+                <span className="tag">div</span>
+                {` className=`}
+                <span className="string">"card"</span>
+                {`>`}
+              </CodeLine>
+              <CodeLine delay={3.5}>
+                {'      '}
+                {`<`}
+                <span className="tag">h2</span>
+                {`>{user.name}</`}
+                <span className="tag">h2</span>
+                {`>`}
+              </CodeLine>
+              <CodeLine delay={4.0}>
+                {'    '}
+                {`</`}
+                <span className="tag">div</span>
+                {`>`}
+              </CodeLine>
+              <CodeLine delay={4.5}>{'  '});</CodeLine>
+              <CodeLine delay={5.0}>{'};'}</CodeLine>
+            </CodeArea>
+          </DevIllustration>
+        </IllustrationContainer>
       </HeroSection>
-
-      <LottieBottom>
-        <Lottie animationData={animationData} loop autoplay />
-      </LottieBottom>
     </HeroWrapper>
   );
 };
