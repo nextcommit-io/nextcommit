@@ -1,7 +1,13 @@
 'use client';
 
 import styled from 'styled-components';
-import { FaGithub, FaSignOutAlt, FaUser, FaCode } from 'react-icons/fa';
+import {
+  FaGithub,
+  FaSignOutAlt,
+  FaUser,
+  FaCode,
+  FaUsers,
+} from 'react-icons/fa';
 import { useSession, signIn, signOut } from 'next-auth/react';
 import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
@@ -358,6 +364,11 @@ export const HeaderContainer = () => {
     setIsDropdownOpen(false);
   };
 
+  const handleTopDevelopersClick = () => {
+    router.push('/top-developers');
+    setIsDropdownOpen(false);
+  };
+
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
   };
@@ -410,6 +421,10 @@ export const HeaderContainer = () => {
             <DropdownItem onClick={handleProfileClick}>
               <FaUser size={16} />
               Profile
+            </DropdownItem>
+            <DropdownItem onClick={handleTopDevelopersClick}>
+              <FaUsers size={16} />
+              Top Developers
             </DropdownItem>
             <DropdownItem onClick={handleSignOut}>
               <FaSignOutAlt size={16} />

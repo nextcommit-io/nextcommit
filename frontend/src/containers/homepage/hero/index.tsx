@@ -6,6 +6,7 @@ import {
   FaRocket,
   FaStar,
   FaArrowRight,
+  FaUsers,
 } from 'react-icons/fa';
 import { signIn, useSession } from 'next-auth/react';
 
@@ -176,6 +177,40 @@ const DashboardButton = styled(CTAButton)`
       #58a6ff 0%,
       ${({ theme }) => theme.colors.accent} 100%
     );
+  }
+`;
+
+const BrowseButton = styled(CTAButton)`
+  background: linear-gradient(
+    135deg,
+    rgba(255, 107, 107, 0.8) 0%,
+    rgba(255, 107, 107, 0.6) 100%
+  );
+  margin-left: 16px;
+
+  &:hover {
+    background: linear-gradient(
+      135deg,
+      rgba(255, 107, 107, 0.9) 0%,
+      rgba(255, 107, 107, 0.7) 100%
+    );
+  }
+
+  @media (max-width: 768px) {
+    margin-left: 0;
+    margin-top: 12px;
+  }
+`;
+
+const ButtonGroup = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 32px;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: stretch;
   }
 `;
 
@@ -416,6 +451,10 @@ export const HomepageHeroContainer = () => {
     window.location.href = '/dashboard';
   };
 
+  const handleBrowseDevelopers = () => {
+    window.location.href = '/top-developers';
+  };
+
   const isLoading = status === 'loading';
 
   return (
@@ -432,15 +471,27 @@ export const HomepageHeroContainer = () => {
           {isLoading ? (
             <LoadingSpinner />
           ) : session?.user ? (
-            <DashboardButton onClick={handleGoToDashboard}>
-              <FaArrowRight size={20} />
-              Go to Dashboard
-            </DashboardButton>
+            <ButtonGroup>
+              <DashboardButton onClick={handleGoToDashboard}>
+                <FaArrowRight size={20} />
+                Go to Dashboard
+              </DashboardButton>
+              <BrowseButton onClick={handleBrowseDevelopers}>
+                <FaUsers size={20} />
+                Browse Top Developers
+              </BrowseButton>
+            </ButtonGroup>
           ) : (
-            <CTAButton onClick={handleSignIn}>
-              <FaGithub size={20} />
-              Sign in with GitHub
-            </CTAButton>
+            <ButtonGroup>
+              <CTAButton onClick={handleSignIn}>
+                <FaGithub size={20} />
+                Sign in with GitHub
+              </CTAButton>
+              <BrowseButton onClick={handleBrowseDevelopers}>
+                <FaUsers size={20} />
+                Browse Top Developers
+              </BrowseButton>
+            </ButtonGroup>
           )}
 
           <TagsContainer>
@@ -455,6 +506,10 @@ export const HomepageHeroContainer = () => {
             <Tag>
               <FaStar size={14} />
               Real Projects
+            </Tag>
+            <Tag>
+              <FaUsers size={14} />
+              Top Talent
             </Tag>
           </TagsContainer>
 
