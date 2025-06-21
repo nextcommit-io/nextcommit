@@ -113,7 +113,6 @@ const ViewAllButton = styled.button`
     );
     border-color: rgba(88, 166, 255, 0.5);
     transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(88, 166, 255, 0.2);
   }
 
   svg {
@@ -147,24 +146,6 @@ const DevelopersContainer = styled.div`
     z-index: 3;
     pointer-events: none;
   }
-
-  &::before {
-    left: 0;
-    background: linear-gradient(
-      90deg,
-      rgba(13, 17, 23, 0.9) 0%,
-      transparent 100%
-    );
-  }
-
-  &::after {
-    right: 0;
-    background: linear-gradient(
-      90deg,
-      transparent 0%,
-      rgba(13, 17, 23, 0.9) 100%
-    );
-  }
 `;
 
 const DevelopersList = styled.div`
@@ -190,40 +171,33 @@ const DeveloperCard = styled.div<{ rank: number }>`
     if (rank === 1) {
       return `
         border-color: #ffd700;
-        box-shadow: 0 8px 32px rgba(255, 215, 0, 0.2);
         transform: scale(1.05);
         
         &:hover {
           transform: scale(1.08);
-          box-shadow: 0 12px 40px rgba(255, 215, 0, 0.3);
         }
       `;
     } else if (rank === 2) {
       return `
         border-color: #c0c0c0;
-        box-shadow: 0 6px 24px rgba(192, 192, 192, 0.2);
         transform: scale(1.02);
         
         &:hover {
           transform: scale(1.05);
-          box-shadow: 0 10px 32px rgba(192, 192, 192, 0.3);
         }
       `;
     } else if (rank === 3) {
       return `
         border-color: #cd7f32;
-        box-shadow: 0 4px 20px rgba(205, 127, 50, 0.2);
         
         &:hover {
           transform: scale(1.03);
-          box-shadow: 0 8px 28px rgba(205, 127, 50, 0.3);
         }
       `;
     }
     return `
       &:hover {
         transform: translateY(-4px);
-        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
         border-color: #58a6ff40;
       }
     `;
@@ -265,7 +239,6 @@ const RankBadge = styled.div<{ rank: number }>`
     if (rank === 3) return 'linear-gradient(135deg, #cd7f32, #daa520)';
     return 'linear-gradient(135deg, #58a6ff, #7ee787)';
   }};
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   z-index: 2;
 `;
 
@@ -290,12 +263,12 @@ const DeveloperHeader = styled.div`
   display: flex;
   align-items: center;
   gap: 16px;
-  margin-bottom: 16px;
+  margin-bottom: 20px;
 `;
 
 const Avatar = styled.div<{ rank: number }>`
-  width: 60px;
-  height: 60px;
+  width: 56px;
+  height: 56px;
   border-radius: 50%;
   overflow: hidden;
   border: 3px solid
@@ -305,7 +278,6 @@ const Avatar = styled.div<{ rank: number }>`
       if (rank === 3) return '#cd7f32';
       return '#58a6ff';
     }};
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
   position: relative;
 
   img {
@@ -339,7 +311,7 @@ const DeveloperName = styled.h3`
   font-size: 18px;
   font-weight: 600;
   color: #c9d1d9;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -363,10 +335,10 @@ const ScoreBadge = styled.div<{ score: number }>`
   font-size: 11px;
   font-weight: 600;
   background: ${({ score }) => {
-    if (score >= 90) return 'rgba(255, 215, 0, 0.2)';
-    if (score >= 80) return 'rgba(192, 192, 192, 0.2)';
-    if (score >= 70) return 'rgba(205, 127, 50, 0.2)';
-    return 'rgba(144, 238, 144, 0.2)';
+    if (score >= 90) return 'rgba(255, 215, 0, 0.15)';
+    if (score >= 80) return 'rgba(192, 192, 192, 0.15)';
+    if (score >= 70) return 'rgba(205, 127, 50, 0.15)';
+    return 'rgba(144, 238, 144, 0.15)';
   }};
   color: ${({ score }) => {
     if (score >= 90) return '#ffd700';
@@ -384,77 +356,88 @@ const ScoreBadge = styled.div<{ score: number }>`
 `;
 
 const StatsGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 16px;
+  padding: 12px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 `;
 
 const StatItem = styled.div`
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 6px;
-  font-size: 12px;
+  gap: 4px;
+  text-align: center;
+`;
+
+const StatValue = styled.div`
+  font-size: 16px;
+  font-weight: 600;
+  color: #c9d1d9;
+`;
+
+const StatLabel = styled.div`
+  font-size: 10px;
   color: #8b949e;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 `;
 
 const LanguagesSection = styled.div`
   margin-bottom: 16px;
 `;
 
-const LanguagesTitle = styled.div`
-  font-size: 11px;
-  font-weight: 500;
-  color: #8b949e;
-  margin-bottom: 8px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-`;
-
 const LanguagesList = styled.div`
   display: flex;
   flex-wrap: wrap;
-  gap: 4px;
+  gap: 6px;
+  justify-content: center;
 `;
 
 const LanguageTag = styled.span`
-  padding: 3px 6px;
+  padding: 4px 8px;
   background: rgba(88, 166, 255, 0.1);
   color: #58a6ff;
-  border-radius: 4px;
-  font-size: 10px;
+  border-radius: 6px;
+  font-size: 11px;
   font-weight: 500;
   border: 1px solid rgba(88, 166, 255, 0.2);
+  transition: all 0.3s ease;
+
+  &:hover {
+    background: rgba(88, 166, 255, 0.2);
+    transform: translateY(-1px);
+  }
 `;
 
 const ContactSection = styled.div`
   border-top: 1px solid #30363d;
   padding-top: 12px;
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
-`;
-
-const RateInfo = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 12px;
-  color: #7ee787;
-  font-weight: 500;
 `;
 
 const AvailabilityBadge = styled.div`
   display: inline-flex;
   align-items: center;
-  gap: 3px;
-  padding: 3px 6px;
-  background: rgba(46, 160, 67, 0.2);
+  gap: 4px;
+  padding: 6px 12px;
+  background: rgba(46, 160, 67, 0.15);
   color: #7ee787;
-  border-radius: 4px;
-  font-size: 10px;
+  border-radius: 8px;
+  font-size: 11px;
   font-weight: 500;
   border: 1px solid rgba(46, 160, 67, 0.3);
+  transition: all 0.3s ease;
+
+  &:hover {
+    background: rgba(46, 160, 67, 0.25);
+    transform: translateY(-1px);
+  }
 `;
 
 const LoadingState = styled.div`
@@ -577,34 +560,28 @@ export const TopDevelopersPreviewContainer = () => {
 
               <StatsGrid>
                 <StatItem>
-                  <FaCode size={10} />
-                  {developer.stats.repositories} repos
+                  <StatValue>{developer.stats.repositories}</StatValue>
+                  <StatLabel>Repos</StatLabel>
                 </StatItem>
                 <StatItem>
-                  <FaStar size={10} />
-                  {developer.stats.starsEarned} stars
+                  <StatValue>{developer.stats.starsEarned}</StatValue>
+                  <StatLabel>Stars</StatLabel>
                 </StatItem>
                 <StatItem>
-                  <FaUsers size={10} />
-                  {developer.stats.contributions} contributions
-                </StatItem>
-                <StatItem>
-                  <FaMapMarkerAlt size={10} />
-                  {developer.location}
+                  <StatValue>{developer.stats.contributions}</StatValue>
+                  <StatLabel>Contributions</StatLabel>
                 </StatItem>
               </StatsGrid>
 
               <LanguagesSection>
-                <LanguagesTitle>Top Languages</LanguagesTitle>
                 <LanguagesList>
-                  {developer.topLanguages.slice(0, 3).map((language) => (
+                  {developer.topLanguages.slice(0, 4).map((language) => (
                     <LanguageTag key={language}>{language}</LanguageTag>
                   ))}
                 </LanguagesList>
               </LanguagesSection>
 
               <ContactSection>
-                <RateInfo>{developer.hourlyRate}/hr</RateInfo>
                 <AvailabilityBadge>{developer.availability}</AvailabilityBadge>
               </ContactSection>
             </DeveloperCard>
