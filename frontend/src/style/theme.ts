@@ -10,7 +10,7 @@ export const theme = {
     tagText: '#58a6ff',
   },
   fonts: {
-    body: `'Inter', sans-serif`,
-    mono: `'Fira Code', monospace`,
+    body: `var(--font-space-grotesk), sans-serif`,
+    mono: `var(--font-fira-code), monospace`,
   },
 };
