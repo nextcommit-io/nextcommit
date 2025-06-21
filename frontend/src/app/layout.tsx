@@ -20,8 +20,10 @@ export default function RootLayout({
     <html lang="en">
       <body style={{ margin: 0, padding: 0 }}>
         <StyledRoot>
-          <HeaderContainer />
-          <SessionWrapper>{children}</SessionWrapper>
+          <SessionWrapper>
+            <HeaderContainer />
+            {children}
+          </SessionWrapper>
         </StyledRoot>
       </body>
     </html>
