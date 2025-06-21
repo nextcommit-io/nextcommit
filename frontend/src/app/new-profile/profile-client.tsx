@@ -20,6 +20,9 @@ import {
   FaHeart,
   FaEye,
   FaDownload,
+  FaChartLine,
+  FaAward,
+  FaMedal,
 } from 'react-icons/fa';
 
 const ProfileWrapper = styled.div`
@@ -417,6 +420,238 @@ const RepoStats = styled.div`
   gap: 4px;
 `;
 
+const ContributionScoreCard = styled.div`
+  background: linear-gradient(
+    135deg,
+    rgba(88, 166, 255, 0.1) 0%,
+    rgba(255, 107, 107, 0.1) 100%
+  );
+  border: 2px solid ${({ theme }) => theme.colors.accent};
+  border-radius: 20px;
+  padding: 32px;
+  margin-bottom: 32px;
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(10px);
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+      135deg,
+      rgba(88, 166, 255, 0.05) 0%,
+      rgba(255, 107, 107, 0.05) 100%
+    );
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  &:hover::before {
+    opacity: 1;
+  }
+`;
+
+const ScoreHeader = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+`;
+
+const ScoreTitle = styled.h2`
+  font-size: 24px;
+  font-weight: 700;
+  color: ${({ theme }) => theme.colors.textPrimary};
+  display: flex;
+  align-items: center;
+  gap: 12px;
+`;
+
+const ExperienceLevel = styled.div<{ color: string }>`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 20px;
+  background: ${({ color }) => color}20;
+  border: 1px solid ${({ color }) => color}40;
+  color: ${({ color }) => color};
+  font-weight: 600;
+  font-size: 14px;
+`;
+
+const ScoreDisplay = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  margin-bottom: 24px;
+`;
+
+const MainScore = styled.div`
+  text-align: center;
+`;
+
+const ScoreNumber = styled.div`
+  font-size: 48px;
+  font-weight: 800;
+  color: ${({ theme }) => theme.colors.accent};
+  font-family: ${({ theme }) => theme.fonts.mono};
+  text-shadow: 0 0 20px ${({ theme }) => theme.colors.accent}40;
+`;
+
+const ScoreLabel = styled.div`
+  font-size: 14px;
+  color: ${({ theme }) => theme.colors.textSecondary};
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+`;
+
+const ScoreBreakdown = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 16px;
+  margin-top: 24px;
+`;
+
+const BreakdownItem = styled.div`
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 16px;
+  text-align: center;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: ${({ theme }) => theme.colors.accent}40;
+    transform: translateY(-2px);
+  }
+`;
+
+const BreakdownValue = styled.div`
+  font-size: 24px;
+  font-weight: 700;
+  color: ${({ theme }) => theme.colors.textPrimary};
+  font-family: ${({ theme }) => theme.fonts.mono};
+  margin-bottom: 4px;
+`;
+
+const BreakdownLabel = styled.div`
+  font-size: 12px;
+  color: ${({ theme }) => theme.colors.textSecondary};
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+`;
+
+const BadgesSection = styled.div`
+  margin-bottom: 32px;
+`;
+
+const BadgesGrid = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 16px;
+`;
+
+const Badge = styled.div<{ color: string }>`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 20px;
+  background: ${({ color }) => color}20;
+  border: 1px solid ${({ color }) => color}40;
+  color: ${({ color }) => color};
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px ${({ color }) => color}30;
+  }
+`;
+
+const RecruiterSection = styled.div`
+  background: linear-gradient(
+    135deg,
+    rgba(255, 107, 107, 0.1) 0%,
+    rgba(88, 166, 255, 0.1) 100%
+  );
+  border: 1px solid rgba(255, 107, 107, 0.2);
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 24px;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(
+      90deg,
+      #ff6b6b,
+      ${({ theme }) => theme.colors.accent}
+    );
+  }
+`;
+
+const RecruiterTitle = styled.h3`
+  font-size: 18px;
+  font-weight: 700;
+  color: ${({ theme }) => theme.colors.textPrimary};
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+`;
+
+const RecruiterText = styled.p`
+  font-size: 14px;
+  color: ${({ theme }) => theme.colors.textSecondary};
+  line-height: 1.6;
+  margin-bottom: 16px;
+`;
+
+const RecruiterStats = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 12px;
+`;
+
+const RecruiterStat = styled.div`
+  text-align: center;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+`;
+
+const RecruiterStatValue = styled.div`
+  font-size: 20px;
+  font-weight: 700;
+  color: ${({ theme }) => theme.colors.accent};
+  font-family: ${({ theme }) => theme.fonts.mono};
+`;
+
+const RecruiterStatLabel = styled.div`
+  font-size: 11px;
+  color: ${({ theme }) => theme.colors.textSecondary};
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+`;
+
 interface ProfileData {
   user: any;
   stats: {
@@ -425,6 +660,28 @@ interface ProfileData {
     contributions: number;
     achievements: number;
   };
+  contributionScore: {
+    totalScore: number;
+    experienceLevel: {
+      level: string;
+      badge: string;
+      color: string;
+      score: number;
+    };
+    breakdown: {
+      repositories: { count: number; score: number };
+      stars: { count: number; score: number };
+      forks: { count: number; score: number };
+      pullRequests: { count: number; score: number };
+      commits: { count: number; score: number };
+      languages: { count: number; score: number };
+    };
+  };
+  badges: Array<{
+    name: string;
+    icon: string;
+    color: string;
+  }>;
   topLanguages: string[];
   recentActivity: Array<{
     type: string;
@@ -513,6 +770,123 @@ export function ProfileClient({ profileData }: ProfileClientProps) {
             </UserDetails>
           </ProfileInfo>
         </ProfileHeader>
+
+        <ContributionScoreCard>
+          <ScoreHeader>
+            <ScoreTitle>
+              <FaChartLine size={24} />
+              Contribution Score
+            </ScoreTitle>
+            <ExperienceLevel
+              color={profileData.contributionScore.experienceLevel.color}
+            >
+              {profileData.contributionScore.experienceLevel.badge}
+              {profileData.contributionScore.experienceLevel.level}
+            </ExperienceLevel>
+          </ScoreHeader>
+
+          <ScoreDisplay>
+            <MainScore>
+              <ScoreNumber>
+                {profileData.contributionScore.totalScore}
+              </ScoreNumber>
+              <ScoreLabel>Total Score</ScoreLabel>
+            </MainScore>
+          </ScoreDisplay>
+
+          <ScoreBreakdown>
+            <BreakdownItem>
+              <BreakdownValue>
+                {profileData.contributionScore.breakdown.repositories.count}
+              </BreakdownValue>
+              <BreakdownLabel>Repositories</BreakdownLabel>
+            </BreakdownItem>
+            <BreakdownItem>
+              <BreakdownValue>
+                {profileData.contributionScore.breakdown.stars.count}
+              </BreakdownValue>
+              <BreakdownLabel>Stars Earned</BreakdownLabel>
+            </BreakdownItem>
+            <BreakdownItem>
+              <BreakdownValue>
+                {profileData.contributionScore.breakdown.pullRequests.count}
+              </BreakdownValue>
+              <BreakdownLabel>Pull Requests</BreakdownLabel>
+            </BreakdownItem>
+            <BreakdownItem>
+              <BreakdownValue>
+                {profileData.contributionScore.breakdown.commits.count}
+              </BreakdownValue>
+              <BreakdownLabel>Commits</BreakdownLabel>
+            </BreakdownItem>
+            <BreakdownItem>
+              <BreakdownValue>
+                {profileData.contributionScore.breakdown.languages.count}
+              </BreakdownValue>
+              <BreakdownLabel>Languages</BreakdownLabel>
+            </BreakdownItem>
+            <BreakdownItem>
+              <BreakdownValue>
+                {profileData.contributionScore.breakdown.forks.count}
+              </BreakdownValue>
+              <BreakdownLabel>Forks</BreakdownLabel>
+            </BreakdownItem>
+          </ScoreBreakdown>
+        </ContributionScoreCard>
+
+        <RecruiterSection>
+          <RecruiterTitle>
+            <FaAward size={18} />
+            For Recruiters
+          </RecruiterTitle>
+          <RecruiterText>
+            This developer has demonstrated strong open source contribution
+            skills with real-world experience. Their GitHub activity shows
+            consistent engagement, technical diversity, and community
+            involvement.
+          </RecruiterText>
+          <RecruiterStats>
+            <RecruiterStat>
+              <RecruiterStatValue>
+                {profileData.contributionScore.experienceLevel.level}
+              </RecruiterStatValue>
+              <RecruiterStatLabel>Experience Level</RecruiterStatLabel>
+            </RecruiterStat>
+            <RecruiterStat>
+              <RecruiterStatValue>
+                {profileData.stats.repositories}
+              </RecruiterStatValue>
+              <RecruiterStatLabel>Original Projects</RecruiterStatLabel>
+            </RecruiterStat>
+            <RecruiterStat>
+              <RecruiterStatValue>
+                {profileData.stats.contributions}
+              </RecruiterStatValue>
+              <RecruiterStatLabel>Contributions</RecruiterStatLabel>
+            </RecruiterStat>
+            <RecruiterStat>
+              <RecruiterStatValue>
+                {profileData.topLanguages.length}
+              </RecruiterStatValue>
+              <RecruiterStatLabel>Languages</RecruiterStatLabel>
+            </RecruiterStat>
+          </RecruiterStats>
+        </RecruiterSection>
+
+        <BadgesSection>
+          <SectionTitle>
+            <FaMedal size={20} />
+            Achievement Badges
+          </SectionTitle>
+          <BadgesGrid>
+            {profileData.badges.map((badge, index) => (
+              <Badge key={index} color={badge.color}>
+                <span>{badge.icon}</span>
+                {badge.name}
+              </Badge>
+            ))}
+          </BadgesGrid>
+        </BadgesSection>
 
         <StatsGrid>
           <StatCard>

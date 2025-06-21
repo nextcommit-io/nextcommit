@@ -4,6 +4,150 @@ import { fetchGitHubData } from '@/lib/github';
 import { ProfileClient } from './profile-client';
 import { HeaderContainer, FooterContainer } from '@/containers';
 
+// Contribution scoring algorithm
+const calculateContributionScore = (data: any) => {
+  const { originalRepos, forkedRepos, pullRequests, commits } = data;
+
+  let score = 0;
+  const metrics = {
+    repositories: 0,
+    stars: 0,
+    forks: 0,
+    pullRequests: 0,
+    commits: 0,
+    languages: 0,
+    experience: 0,
+  };
+
+  // Repository contributions (weight: 30%)
+  const totalRepos = originalRepos.length + forkedRepos.length;
+  metrics.repositories = totalRepos * 10;
+  score += metrics.repositories * 0.3;
+
+  // Stars earned (weight: 20%)
+  const totalStars = originalRepos.reduce(
+    (sum: number, repo: any) => sum + (repo.stargazers_count || 0),
+    0
+  );
+  metrics.stars = totalStars * 2;
+  score += metrics.stars * 0.2;
+
+  // Forks received (weight: 15%)
+  const totalForks = originalRepos.reduce(
+    (sum: number, repo: any) => sum + (repo.forks_count || 0),
+    0
+  );
+  metrics.forks = totalForks * 3;
+  score += metrics.forks * 0.15;
+
+  // Pull requests (weight: 20%)
+  const totalPRs = pullRequests.items?.length || 0;
+  metrics.pullRequests = totalPRs * 15;
+  score += metrics.pullRequests * 0.2;
+
+  // Commits (weight: 10%)
+  const totalCommits = commits.reduce(
+    (sum: number, repoCommits: any) => sum + repoCommits.commits.length,
+    0
+  );
+  metrics.commits = totalCommits * 5;
+  score += metrics.commits * 0.1;
+
+  // Language diversity (weight: 5%)
+  const languageStats: { [key: string]: number } = {};
+  originalRepos.forEach((repo: any) => {
+    if (repo.language) {
+      languageStats[repo.language] = (languageStats[repo.language] || 0) + 1;
+    }
+  });
+  const uniqueLanguages = Object.keys(languageStats).length;
+  metrics.languages = uniqueLanguages * 20;
+  score += metrics.languages * 0.05;
+
+  // Experience level calculation
+  const experienceLevel = calculateExperienceLevel(score);
+  metrics.experience = experienceLevel.score;
+
+  return {
+    totalScore: Math.round(score),
+    metrics,
+    experienceLevel,
+    breakdown: {
+      repositories: { count: totalRepos, score: metrics.repositories },
+      stars: { count: totalStars, score: metrics.stars },
+      forks: { count: totalForks, score: metrics.forks },
+      pullRequests: { count: totalPRs, score: metrics.pullRequests },
+      commits: { count: totalCommits, score: metrics.commits },
+      languages: { count: uniqueLanguages, score: metrics.languages },
+    },
+  };
+};
+
+const calculateExperienceLevel = (score: number) => {
+  if (score >= 1000)
+    return { level: 'Senior', badge: '🏆', color: '#ffd700', score: 1000 };
+  if (score >= 500)
+    return { level: 'Intermediate', badge: '⭐', color: '#c0c0c0', score: 500 };
+  if (score >= 200)
+    return { level: 'Junior+', badge: '🚀', color: '#cd7f32', score: 200 };
+  if (score >= 100)
+    return { level: 'Junior', badge: '🌱', color: '#90EE90', score: 100 };
+  return { level: 'Beginner', badge: '🌱', color: '#90EE90', score: 50 };
+};
+
+const getContributionBadges = (data: any) => {
+  const badges = [];
+  const { originalRepos, forkedRepos, pullRequests, commits } = data;
+
+  // Repository badges
+  if (originalRepos.length >= 10)
+    badges.push({ name: 'Repository Master', icon: '📚', color: '#ff6b6b' });
+  else if (originalRepos.length >= 5)
+    badges.push({ name: 'Project Creator', icon: '📁', color: '#4ecdc4' });
+  else if (originalRepos.length >= 1)
+    badges.push({ name: 'First Project', icon: '🎯', color: '#45b7d1' });
+
+  // Star badges
+  const totalStars = originalRepos.reduce(
+    (sum: number, repo: any) => sum + (repo.stargazers_count || 0),
+    0
+  );
+  if (totalStars >= 100)
+    badges.push({ name: 'Star Collector', icon: '⭐', color: '#ffd700' });
+  else if (totalStars >= 50)
+    badges.push({ name: 'Rising Star', icon: '✨', color: '#ffb6c1' });
+  else if (totalStars >= 10)
+    badges.push({ name: 'Getting Noticed', icon: '🌟', color: '#98fb98' });
+
+  // Contribution badges
+  const totalPRs = pullRequests.items?.length || 0;
+  if (totalPRs >= 20)
+    badges.push({ name: 'Open Source Hero', icon: '🦸', color: '#ff6b6b' });
+  else if (totalPRs >= 10)
+    badges.push({ name: 'Active Contributor', icon: '🤝', color: '#4ecdc4' });
+  else if (totalPRs >= 5)
+    badges.push({ name: 'Team Player', icon: '👥', color: '#45b7d1' });
+  else if (totalPRs >= 1)
+    badges.push({ name: 'First Contribution', icon: '🎉', color: '#98fb98' });
+
+  // Language badges
+  const languageStats: { [key: string]: number } = {};
+  originalRepos.forEach((repo: any) => {
+    if (repo.language) {
+      languageStats[repo.language] = (languageStats[repo.language] || 0) + 1;
+    }
+  });
+  const uniqueLanguages = Object.keys(languageStats).length;
+  if (uniqueLanguages >= 5)
+    badges.push({ name: 'Polyglot Developer', icon: '🌍', color: '#ff6b6b' });
+  else if (uniqueLanguages >= 3)
+    badges.push({ name: 'Multi-Language', icon: '🔤', color: '#4ecdc4' });
+  else if (uniqueLanguages >= 2)
+    badges.push({ name: 'Versatile', icon: '🔄', color: '#45b7d1' });
+
+  return badges;
+};
+
 export default async function ProfilePage() {
   const session = await getServerSession(authOptions);
 
@@ -33,6 +177,20 @@ export default async function ProfilePage() {
   try {
     const { originalRepos, forkedRepos, pullRequests, commits } =
       await fetchGitHubData(session.accessToken);
+
+    // Calculate contribution score and experience
+    const contributionScore = calculateContributionScore({
+      originalRepos,
+      forkedRepos,
+      pullRequests,
+      commits,
+    });
+    const badges = getContributionBadges({
+      originalRepos,
+      forkedRepos,
+      pullRequests,
+      commits,
+    });
 
     // Calculate stats from real data
     const totalStars = originalRepos.reduce(
@@ -110,6 +268,8 @@ export default async function ProfilePage() {
         achievements:
           Math.floor(totalCommits / 10) + Math.floor(totalStars / 10),
       },
+      contributionScore,
+      badges,
       topLanguages,
       recentActivity,
       repositories: originalRepos,
