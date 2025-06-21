@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import { FaGithub, FaSignOutAlt, FaUser, FaCode } from 'react-icons/fa';
 import { useSession, signIn, signOut } from 'next-auth/react';
 import { useState, useRef, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
 const HeaderWrapper = styled.header`
   display: flex;
@@ -341,6 +342,7 @@ export const HeaderContainer = () => {
   const { data: session, status } = useSession();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
 
   const handleSignIn = () => {
     signIn('github');
@@ -348,6 +350,11 @@ export const HeaderContainer = () => {
 
   const handleSignOut = () => {
     signOut({ callbackUrl: '/' });
+    setIsDropdownOpen(false);
+  };
+
+  const handleProfileClick = () => {
+    router.push('/new-profile');
     setIsDropdownOpen(false);
   };
 
@@ -400,7 +407,7 @@ export const HeaderContainer = () => {
           </UserInfo>
 
           <DropdownMenu isOpen={isDropdownOpen}>
-            <DropdownItem onClick={() => (window.location.href = '/profile')}>
+            <DropdownItem onClick={handleProfileClick}>
               <FaUser size={16} />
               Profile
             </DropdownItem>

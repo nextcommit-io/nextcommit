@@ -1,10 +1,10 @@
 // app/layout.tsx
 
 import type { Metadata } from 'next';
-
+import StyledComponentsRegistry from '@/lib/registry';
+import { ThemeProvider } from '@/components/theme-provider';
+import GlobalStyles from '@/components/global-styles';
 import SessionWrapper from '@/contexts/SessionWrapper';
-import StyledRoot from '@/components/styled-root';
-import { FooterContainer, HeaderContainer } from '@/containers';
 
 export const metadata: Metadata = {
   title: 'NextCommit',
@@ -18,14 +18,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body style={{ margin: 0, padding: 0 }}>
-        <StyledRoot>
-          <SessionWrapper>
-            <HeaderContainer />
-            {children}
-            <FooterContainer />
-          </SessionWrapper>
-        </StyledRoot>
+      <body>
+        <StyledComponentsRegistry>
+          <ThemeProvider>
+            <GlobalStyles />
+            <SessionWrapper>{children}</SessionWrapper>
+          </ThemeProvider>
+        </StyledComponentsRegistry>
       </body>
     </html>
   );

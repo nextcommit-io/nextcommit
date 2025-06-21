@@ -2,26 +2,31 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/authOptions';
 import { fetchGitHubData } from '@/lib/github';
 import { ProfileClient } from './profile-client';
+import { HeaderContainer, FooterContainer } from '@/containers';
 
 export default async function ProfilePage() {
   const session = await getServerSession(authOptions);
 
   if (!session || !session.accessToken) {
     return (
-      <div
-        style={{
-          minHeight: '100vh',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          background: 'linear-gradient(135deg, #0d1117 0%, #161b22 100%)',
-          color: '#ff6b6b',
-          fontSize: '18px',
-          fontWeight: '500',
-        }}
-      >
-        Please sign in to view your profile
-      </div>
+      <>
+        <HeaderContainer />
+        <div
+          style={{
+            minHeight: '100vh',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            background: 'linear-gradient(135deg, #0d1117 0%, #161b22 100%)',
+            color: '#ff6b6b',
+            fontSize: '18px',
+            fontWeight: '500',
+          }}
+        >
+          Please sign in to view your profile
+        </div>
+        <FooterContainer />
+      </>
     );
   }
 
@@ -112,24 +117,34 @@ export default async function ProfilePage() {
       pullRequests: pullRequests.items || [],
     };
 
-    return <ProfileClient profileData={profileData} />;
+    return (
+      <>
+        <HeaderContainer />
+        <ProfileClient profileData={profileData} />
+        <FooterContainer />
+      </>
+    );
   } catch (error) {
     console.error('Error fetching GitHub data:', error);
     return (
-      <div
-        style={{
-          minHeight: '100vh',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          background: 'linear-gradient(135deg, #0d1117 0%, #161b22 100%)',
-          color: '#ff6b6b',
-          fontSize: '18px',
-          fontWeight: '500',
-        }}
-      >
-        Error loading profile data. Please try again later.
-      </div>
+      <>
+        <HeaderContainer />
+        <div
+          style={{
+            minHeight: '100vh',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            background: 'linear-gradient(135deg, #0d1117 0%, #161b22 100%)',
+            color: '#ff6b6b',
+            fontSize: '18px',
+            fontWeight: '500',
+          }}
+        >
+          Error loading profile data. Please try again later.
+        </div>
+        <FooterContainer />
+      </>
     );
   }
 }
