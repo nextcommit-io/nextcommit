@@ -148,6 +148,83 @@ const getContributionBadges = (data: any) => {
   return badges;
 };
 
+// Process and extract high-value code snippets
+const processCodeSnippets = (commits: any[]) => {
+  const allCommits = commits.flatMap((repoCommits: any) =>
+    repoCommits.commits.map((commit: any) => ({
+      ...commit,
+      repoName: repoCommits.repo,
+      repoStars: repoCommits.repoStars,
+      repoLanguage: repoCommits.repoLanguage,
+    }))
+  );
+
+  // Sort by value and get top commits
+  const topCommits = allCommits
+    .sort((a: any, b: any) => b.value - a.value)
+    .slice(0, 5);
+
+  return topCommits.map((commit: any) => {
+    // Extract the most significant file changes
+    const significantFiles = commit.files
+      .filter(
+        (file: any) =>
+          file.patch &&
+          (file.filename.includes('.js') ||
+            file.filename.includes('.ts') ||
+            file.filename.includes('.py') ||
+            file.filename.includes('.java') ||
+            file.filename.includes('.cpp') ||
+            file.filename.includes('.go') ||
+            file.filename.includes('.tsx') ||
+            file.filename.includes('.jsx'))
+      )
+      .slice(0, 2); // Limit to 2 files per commit
+
+    return {
+      ...commit,
+      significantFiles: significantFiles.map((file: any) => ({
+        filename: file.filename,
+        status: file.status,
+        additions: file.additions,
+        deletions: file.deletions,
+        patch: file.patch,
+        language: getLanguageFromFilename(file.filename),
+      })),
+    };
+  });
+};
+
+const getLanguageFromFilename = (filename: string) => {
+  if (filename.includes('.ts') || filename.includes('.tsx'))
+    return 'TypeScript';
+  if (filename.includes('.js') || filename.includes('.jsx'))
+    return 'JavaScript';
+  if (filename.includes('.py')) return 'Python';
+  if (filename.includes('.java')) return 'Java';
+  if (filename.includes('.cpp') || filename.includes('.cc')) return 'C++';
+  if (filename.includes('.go')) return 'Go';
+  if (filename.includes('.rs')) return 'Rust';
+  if (filename.includes('.php')) return 'PHP';
+  if (filename.includes('.rb')) return 'Ruby';
+  return 'Other';
+};
+
+const formatCodeSnippet = (patch: string, maxLines: number = 15) => {
+  if (!patch) return '';
+
+  const lines = patch.split('\n');
+  const formattedLines = lines.slice(0, maxLines).map((line: string) => {
+    if (line.startsWith('+'))
+      return { type: 'addition', content: line.substring(1) };
+    if (line.startsWith('-'))
+      return { type: 'deletion', content: line.substring(1) };
+    return { type: 'context', content: line };
+  });
+
+  return formattedLines;
+};
+
 export default async function ProfilePage() {
   const session = await getServerSession(authOptions);
 
@@ -191,6 +268,9 @@ export default async function ProfilePage() {
       pullRequests,
       commits,
     });
+
+    // Process high-value code snippets
+    const codeSnippets = processCodeSnippets(commits);
 
     // Calculate stats from real data
     const totalStars = originalRepos.reduce(
@@ -270,6 +350,7 @@ export default async function ProfilePage() {
       },
       contributionScore,
       badges,
+      codeSnippets,
       topLanguages,
       recentActivity,
       repositories: originalRepos,

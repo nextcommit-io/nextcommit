@@ -23,6 +23,9 @@ import {
   FaChartLine,
   FaAward,
   FaMedal,
+  FaExternalLinkAlt,
+  FaPlus,
+  FaMinus,
 } from 'react-icons/fa';
 
 const ProfileWrapper = styled.div`
@@ -652,6 +655,175 @@ const RecruiterStatLabel = styled.div`
   letter-spacing: 0.5px;
 `;
 
+const CodeSnippetsSection = styled.div`
+  margin-bottom: 32px;
+`;
+
+const CodeSnippetCard = styled.div`
+  background: rgba(13, 17, 23, 0.8);
+  border: 1px solid ${({ theme }) => theme.colors.border};
+  border-radius: 16px;
+  margin-bottom: 24px;
+  overflow: hidden;
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+    border-color: ${({ theme }) => theme.colors.accent}40;
+  }
+`;
+
+const SnippetHeader = styled.div`
+  background: rgba(0, 0, 0, 0.3);
+  padding: 16px 20px;
+  border-bottom: 1px solid ${({ theme }) => theme.colors.border};
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+const SnippetInfo = styled.div`
+  flex: 1;
+`;
+
+const SnippetTitle = styled.div`
+  font-size: 16px;
+  font-weight: 600;
+  color: ${({ theme }) => theme.colors.textPrimary};
+  margin-bottom: 4px;
+  font-family: ${({ theme }) => theme.fonts.mono};
+`;
+
+const SnippetMeta = styled.div`
+  display: flex;
+  gap: 16px;
+  font-size: 12px;
+  color: ${({ theme }) => theme.colors.textSecondary};
+`;
+
+const SnippetValue = styled.div<{ value: number }>`
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 600;
+  background: ${({ value }) => {
+    if (value >= 80) return 'rgba(255, 215, 0, 0.2)';
+    if (value >= 60) return 'rgba(192, 192, 192, 0.2)';
+    if (value >= 40) return 'rgba(205, 127, 50, 0.2)';
+    return 'rgba(144, 238, 144, 0.2)';
+  }};
+  color: ${({ value }) => {
+    if (value >= 80) return '#ffd700';
+    if (value >= 60) return '#c0c0c0';
+    if (value >= 40) return '#cd7f32';
+    return '#90EE90';
+  }};
+  border: 1px solid
+    ${({ value }) => {
+      if (value >= 80) return '#ffd700';
+      if (value >= 60) return '#c0c0c0';
+      if (value >= 40) return '#cd7f32';
+      return '#90EE90';
+    }}40;
+`;
+
+const SnippetLink = styled.a`
+  color: ${({ theme }) => theme.colors.accent};
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  transition: all 0.3s ease;
+
+  &:hover {
+    color: #58a6ff;
+    transform: translateX(2px);
+  }
+`;
+
+const CodeContainer = styled.div`
+  padding: 20px;
+  max-height: 400px;
+  overflow-y: auto;
+`;
+
+const FileHeader = styled.div`
+  background: rgba(0, 0, 0, 0.2);
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+const FileName = styled.div`
+  font-family: ${({ theme }) => theme.fonts.mono};
+  font-size: 14px;
+  color: ${({ theme }) => theme.colors.textPrimary};
+  font-weight: 500;
+`;
+
+const FileStats = styled.div`
+  display: flex;
+  gap: 12px;
+  font-size: 12px;
+  color: ${({ theme }) => theme.colors.textSecondary};
+`;
+
+const CodeBlock = styled.div`
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: 8px;
+  padding: 16px;
+  font-family: ${({ theme }) => theme.fonts.mono};
+  font-size: 13px;
+  line-height: 1.5;
+  overflow-x: auto;
+  white-space: pre;
+`;
+
+const CodeLine = styled.div<{ type: 'addition' | 'deletion' | 'context' }>`
+  ${({ type }) => {
+    switch (type) {
+      case 'addition':
+        return `
+          background: rgba(46, 160, 67, 0.2);
+          color: #7ee787;
+          border-left: 3px solid #7ee787;
+          padding-left: 8px;
+        `;
+      case 'deletion':
+        return `
+          background: rgba(248, 81, 73, 0.2);
+          color: #ff7b72;
+          border-left: 3px solid #ff7b72;
+          padding-left: 8px;
+        `;
+      default:
+        return `
+          color: #8b949e;
+          padding-left: 11px;
+        `;
+    }
+  }}
+`;
+
+const NoSnippetsMessage = styled.div`
+  text-align: center;
+  padding: 40px;
+  color: ${({ theme }) => theme.colors.textSecondary};
+  font-size: 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+`;
+
 interface ProfileData {
   user: any;
   stats: {
@@ -681,6 +853,24 @@ interface ProfileData {
     name: string;
     icon: string;
     color: string;
+  }>;
+  codeSnippets: Array<{
+    sha: string;
+    message: string;
+    html_url: string;
+    date: string;
+    value: number;
+    repoName: string;
+    repoStars: number;
+    repoLanguage: string;
+    significantFiles: Array<{
+      filename: string;
+      status: string;
+      additions: number;
+      deletions: number;
+      patch: string;
+      language: string;
+    }>;
   }>;
   topLanguages: string[];
   recentActivity: Array<{
@@ -712,6 +902,19 @@ const getIconComponent = (iconName: string) => {
     default:
       return <FaCode size={16} />;
   }
+};
+
+const formatCodeSnippet = (patch: string, maxLines: number = 15) => {
+  if (!patch) return [];
+
+  const lines = patch.split('\n');
+  return lines.slice(0, maxLines).map((line: string) => {
+    if (line.startsWith('+'))
+      return { type: 'addition' as const, content: line.substring(1) };
+    if (line.startsWith('-'))
+      return { type: 'deletion' as const, content: line.substring(1) };
+    return { type: 'context' as const, content: line };
+  });
 };
 
 export function ProfileClient({ profileData }: ProfileClientProps) {
@@ -872,6 +1075,89 @@ export function ProfileClient({ profileData }: ProfileClientProps) {
             </RecruiterStat>
           </RecruiterStats>
         </RecruiterSection>
+
+        <CodeSnippetsSection>
+          <SectionTitle>
+            <FaCode size={20} />
+            High-Value Code Contributions
+          </SectionTitle>
+          {profileData.codeSnippets.length > 0 ? (
+            profileData.codeSnippets.map((snippet, index) => (
+              <CodeSnippetCard key={index}>
+                <SnippetHeader>
+                  <SnippetInfo>
+                    <SnippetTitle>{snippet.message}</SnippetTitle>
+                    <SnippetMeta>
+                      <span>{snippet.repoName}</span>
+                      <span>⭐ {snippet.repoStars} stars</span>
+                      <span>{snippet.repoLanguage}</span>
+                      <span>{new Date(snippet.date).toLocaleDateString()}</span>
+                    </SnippetMeta>
+                  </SnippetInfo>
+                  <div
+                    style={{
+                      display: 'flex',
+                      gap: '12px',
+                      alignItems: 'center',
+                    }}
+                  >
+                    <SnippetValue value={snippet.value}>
+                      <FaTrophy size={10} />
+                      {snippet.value} pts
+                    </SnippetValue>
+                    <SnippetLink
+                      href={snippet.html_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <FaExternalLinkAlt size={12} />
+                      View
+                    </SnippetLink>
+                  </div>
+                </SnippetHeader>
+                <CodeContainer>
+                  {snippet.significantFiles.map((file, fileIndex) => (
+                    <div key={fileIndex}>
+                      <FileHeader>
+                        <FileName>{file.filename}</FileName>
+                        <FileStats>
+                          <span style={{ color: '#7ee787' }}>
+                            <FaPlus size={10} /> +{file.additions}
+                          </span>
+                          <span style={{ color: '#ff7b72' }}>
+                            <FaMinus size={10} /> -{file.deletions}
+                          </span>
+                          <span>{file.language}</span>
+                        </FileStats>
+                      </FileHeader>
+                      <CodeBlock>
+                        {formatCodeSnippet(file.patch, 12).map(
+                          (line, lineIndex) => (
+                            <CodeLine key={lineIndex} type={line.type}>
+                              {line.content}
+                            </CodeLine>
+                          )
+                        )}
+                      </CodeBlock>
+                    </div>
+                  ))}
+                </CodeContainer>
+              </CodeSnippetCard>
+            ))
+          ) : (
+            <NoSnippetsMessage>
+              <FaCode
+                size={24}
+                style={{ marginBottom: '12px', opacity: 0.5 }}
+              />
+              <div>No high-value code contributions found yet.</div>
+              <div style={{ fontSize: '14px', marginTop: '8px', opacity: 0.7 }}>
+                Start contributing to open source projects to see your code
+                here!
+              </div>
+            </NoSnippetsMessage>
+          )}
+        </CodeSnippetsSection>
 
         <BadgesSection>
           <SectionTitle>
