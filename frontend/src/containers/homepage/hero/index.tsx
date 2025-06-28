@@ -1,14 +1,6 @@
 'use client';
 import styled from 'styled-components';
-import {
-  FaGithub,
-  FaCode,
-  FaRocket,
-  FaStar,
-  FaArrowRight,
-  FaUsers,
-} from 'react-icons/fa';
-import { signIn, useSession } from 'next-auth/react';
+import { FaCode, FaRocket, FaStar, FaUsers } from 'react-icons/fa';
 
 const HeroWrapper = styled.div`
   position: relative;
@@ -441,18 +433,6 @@ const CodeLine = styled.div<{ delay?: number }>`
 `;
 
 export const HomepageHeroContainer = () => {
-  const { data: session, status } = useSession();
-
-  const handleSignIn = () => {
-    signIn('github');
-  };
-
-  const handleBrowseDevelopers = () => {
-    window.location.href = '/top-developers';
-  };
-
-  const isLoading = status === 'loading';
-
   return (
     <HeroWrapper>
       <HeroSection>
@@ -463,21 +443,6 @@ export const HomepageHeroContainer = () => {
             by contributing to real-world open source projects. Start your
             journey with GitHub — one commit at a time.
           </Subtitle>
-
-          {isLoading ? (
-            <LoadingSpinner />
-          ) : (
-            <ButtonGroup>
-              <CTAButton onClick={handleSignIn}>
-                <FaGithub size={20} />
-                Sign in with GitHub
-              </CTAButton>
-              <BrowseButton onClick={handleBrowseDevelopers}>
-                <FaUsers size={20} />
-                Browse Top Developers
-              </BrowseButton>
-            </ButtonGroup>
-          )}
 
           <TagsContainer>
             <Tag>

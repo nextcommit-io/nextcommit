@@ -1,16 +1,17 @@
 'use client';
 
+import React, { useState, useRef, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import styled from 'styled-components';
 import {
-  FaGithub,
-  FaSignOutAlt,
-  FaUser,
   FaCode,
+  FaGithub,
+  FaUser,
   FaUsers,
+  FaSignOutAlt,
 } from 'react-icons/fa';
-import { useSession, signIn, signOut } from 'next-auth/react';
-import { useState, useRef, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useFirebaseAuth } from '@/hooks/useFirebaseAuth';
+import { useFirebaseUser } from '@/hooks/useFirebaseUser';
 
 const HeaderWrapper = styled.header`
   display: flex;
@@ -345,18 +346,43 @@ const DevBadge = styled.div`
 `;
 
 export const HeaderContainer = () => {
-  const { data: session, status } = useSession();
+  const { user, loading, signInWithGithub, signOut } = useFirebaseAuth();
+  const {
+    userData,
+    loading: userDataLoading,
+    error: userError,
+  } = useFirebaseUser(user);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
 
-  const handleSignIn = () => {
-    signIn('github');
+  const handleSignIn = async () => {
+    try {
+      const { user, error } = await signInWithGithub();
+      if (error) {
+        console.error('GitHub sign in error:', error.message);
+        // You can add a toast notification here if you have one
+      } else {
+        console.log('Signed in with GitHub successfully!');
+        // The useFirebaseUser hook will handle fetching/creating the user
+      }
+    } catch (error) {
+      console.error('Unexpected error during sign in:', error);
+    }
   };
 
-  const handleSignOut = () => {
-    signOut({ callbackUrl: '/' });
-    setIsDropdownOpen(false);
+  const handleSignOut = async () => {
+    try {
+      const { error } = await signOut();
+      if (error) {
+        console.error('Sign out error:', error.message);
+      } else {
+        console.log('Signed out successfully!');
+        setIsDropdownOpen(false);
+      }
+    } catch (error) {
+      console.error('Unexpected error during sign out:', error);
+    }
   };
 
   const handleProfileClick = () => {
@@ -390,7 +416,13 @@ export const HeaderContainer = () => {
     };
   }, []);
 
-  const isLoading = status === 'loading';
+  // Show loading spinner if either auth is loading or user data is being fetched
+  const isOverallLoading = loading || userDataLoading;
+
+  // Log any user data errors for debugging
+  if (userError) {
+    console.error('User data error:', userError);
+  }
 
   return (
     <HeaderWrapper>
@@ -401,19 +433,19 @@ export const HeaderContainer = () => {
         </LogoLink>
       </LogoWrapper>
 
-      {isLoading ? (
+      {isOverallLoading ? (
         <LoadingSpinner />
-      ) : session?.user ? (
+      ) : user ? (
         <UserSection ref={dropdownRef}>
           <UserInfo onClick={toggleDropdown}>
             <Avatar
-              src={session.user.image || '/default-avatar.svg'}
-              alt={session.user.name || 'User avatar'}
-              onError={(e) => {
+              src={user.photoURL || '/default-avatar.svg'}
+              alt={user.displayName || user.email || 'User avatar'}
+              onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
                 e.currentTarget.src = '/default-avatar.svg';
               }}
             />
-            <UserName>{session.user.name || session.user.email}</UserName>
+            <UserName>{user.displayName || user.email}</UserName>
             <DevBadge>DEV</DevBadge>
           </UserInfo>
 

@@ -16,6 +16,7 @@ export default function HomePage() {
   return (
     <>
       <HeaderContainer />
+
       <PageWrapper>
         <FloatingElements>
           <FloatingElement
